@@ -1,10 +1,9 @@
 import { combineReducers } from 'redux';
 import updateStepReducer from './configReducer';
-import activeStepIdReducer from './currentStep';
+// import { IrootReducer } from './reducer.types';
 
 const rootReducer = combineReducers({
-    steps: updateStepReducer,
-    activeStepId: activeStepIdReducer
+    configData: updateStepReducer,
 });
 
 export default rootReducer;

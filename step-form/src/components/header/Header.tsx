@@ -8,12 +8,9 @@ import { Step } from '../../redux/types';
 
 function Header() {
     const dispatch = useDispatch();
-    const steps = useSelector(state => state?.steps)
-    // console.log(steps)
-    const handleUpdateStep = (id: string, steps: Step[]) => {
-        console.log(id, steps)
+    const { steps } = useSelector(state => state?.configData)
+    const handleUpdateStep = (id: number, steps: Step[]) => {
         dispatch(updateStep({ id, steps }));
-        dispatch(updateActiveStepId(id));
     }
     return (
         <header className='px-4'>

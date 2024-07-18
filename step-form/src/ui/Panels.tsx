@@ -12,7 +12,7 @@ export default function Panels({ steps, handleUpdateStep }: ISteps) {
                     role="list"
                     className="overflow-hidden rounded-md lg:flex lg:rounded-none lg:border-l lg:border-r lg:border-gray-200"
                 >
-                    {steps.map((step, stepIdx) => (
+                    {steps?.map((step, stepIdx) => (
                         <li key={step.id} onClick={(e: any) => {
                             e.stopPropagation();
                             handleUpdateStep(step.id, steps)

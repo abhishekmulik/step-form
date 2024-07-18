@@ -19,7 +19,7 @@ const selectFormSection = (id: number) => {
 }
 
 function FormWrapper(props: IFormWrapper) {
-    const { activeStepId = 0 } = useSelector((state) => state);
+    const { activeStepId = 0 } = useSelector(state => state?.configData)
     return (
         <div>
             {selectFormSection(activeStepId)}
