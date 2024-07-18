@@ -14,7 +14,9 @@ function Header() {
     }
     return (
         <header className='px-4'>
-            <Panels steps={steps} handleUpdateStep={handleUpdateStep} />
+            <Panels steps={steps}
+                handleUpdateStep={handleUpdateStep}
+            />
         </header>
     )
 }

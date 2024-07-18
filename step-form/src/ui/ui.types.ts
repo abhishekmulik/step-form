@@ -1,3 +1,5 @@
+import { ChangeEvent, ReactNode } from "react";
+
 interface Tab {
     name: string;
     href: string;
@@ -20,12 +22,9 @@ export interface ISteps {
     handleUpdateStep: (id: string, steps: Step[]) => void;
 }
 
-export interface Iinput {
-    label?: string;
-    type: string;
-    name: string;
-    className?: string;
-
+export interface Iinput extends React.InputHTMLAttributes<HTMLInputElement> {
+    label: string;
+    onChange: (e: ChangeEvent<HTMLInputElement>) => void;
 }
 
 export interface IUploadFile {
@@ -39,5 +38,7 @@ export interface ITableHeader {
 export interface ITable {
     label: string;
     description: string;
-    headers: ITableHeader[]
+    headers: ITableHeader[];
+    children: ReactNode;
+    createNew: () => void;
 }

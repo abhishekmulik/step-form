@@ -19,3 +19,9 @@ export const updateStep = (state: Step[], id: number): Istepsreducer => {
         activeStepId: sanitizedId
     })
 }
+
+export const updateUserInfo = (state: any, activeStepId: number, updatedObject: Record<string, string>) => {
+    const clonedState = [...state];
+    clonedState[activeStepId] = updatedObject;
+    return clonedState
+}
