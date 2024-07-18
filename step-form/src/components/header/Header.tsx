@@ -3,7 +3,7 @@ import SectionHeading from '../../ui/SectionHeadings'
 import Panels from '../../ui/Panels';
 import { Iheader } from './header.types';
 import { useDispatch, useSelector } from 'react-redux';
-import { updateStep } from '../../redux/actions/updateStep.action';
+import { updateActiveStepId, updateStep } from '../../redux/actions/updateStep.action';
 import { Step } from '../../redux/types';
 
 function Header() {
@@ -13,6 +13,7 @@ function Header() {
     const handleUpdateStep = (id: string, steps: Step[]) => {
         console.log(id, steps)
         dispatch(updateStep({ id, steps }));
+        dispatch(updateActiveStepId(id));
     }
     return (
         <header className='px-4'>

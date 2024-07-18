@@ -1,10 +1,10 @@
 export interface IupdateStep {
-    id: string;
+    id: number;
     steps: Step[]
 }
 
 export interface Step {
-    id: string;
+    id: number;
     name: string;
     href: string;
     status: 'complete' | 'current' | 'upcoming';

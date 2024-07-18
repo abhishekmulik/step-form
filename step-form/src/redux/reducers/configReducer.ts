@@ -4,18 +4,18 @@ import { Step } from "../types"
 
 
 const initialState: Step[] = [
-    { id: '01', name: 'Personal Info', href: '#', status: 'current' },
-    { id: '02', name: 'Education', href: '#', status: 'upcoming' },
-    { id: '03', name: 'Work Experience', href: '#', status: 'upcoming' },
-    { id: '04', name: 'Skills and Qualifications', href: '#', status: 'upcoming' },
-    { id: '05', name: 'Additional Information', href: '#', status: 'upcoming' },
-    { id: '06', name: 'Review and Submit', href: '#', status: 'upcoming' },
+    { id: 0, name: 'Personal Info', href: '#', status: 'current' },
+    { id: 1, name: 'Education', href: '#', status: 'upcoming' },
+    { id: 2, name: 'Work Experience', href: '#', status: 'upcoming' },
+    { id: 3, name: 'Skills and Qualifications', href: '#', status: 'upcoming' },
+    { id: 4, name: 'Additional Information', href: '#', status: 'upcoming' },
+    { id: 5, name: 'Review and Submit', href: '#', status: 'upcoming' },
 ]
 
 
 const updateStepReducer = (state: Step[] = initialState, action: any) => {
     switch (action?.type) {
-        case UPDATE_STEP: {
+        case UPDATE_STEP + '1': {
             return updateStep(action.steps, action.id);
         }
         default:

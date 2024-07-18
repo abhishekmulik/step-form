@@ -1,6 +1,6 @@
 import { Step } from "./types";
 
-export const updateStep = (state: Step[], id: string) => {
+export const updateStep = (state: Step[], id: number) => {
     const updatedSteps = [...state];
     return updatedSteps?.map((step) => {
         if (step.id < id) {

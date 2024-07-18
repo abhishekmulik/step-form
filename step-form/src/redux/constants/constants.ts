@@ -1,1 +1,2 @@
 export const UPDATE_STEP = "UPDATE_STEP";
+export const UPDATE_ACTIVE_STEP_ID = 'UPDATE_ACTIVE_STEP_ID';

@@ -27,3 +27,17 @@ export interface Iinput {
     className?: string;
 
 }
+
+export interface IUploadFile {
+    label: string;
+}
+
+export interface ITableHeader {
+    id: string;
+    name: string
+}
+export interface ITable {
+    label: string;
+    description: string;
+    headers: ITableHeader[]
+}

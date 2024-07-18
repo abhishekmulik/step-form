@@ -1,7 +1,17 @@
 import React from 'react'
 import { IFormLayout } from './formWrapper.types'
+import { useDispatch, useSelector } from 'react-redux'
+import { updateActiveStepId } from '../../../redux/actions/updateStep.action';
 
 function FormLayout({ children, label }: IFormLayout) {
+    const { activeStepId = 0 } = useSelector(state => state);
+    const dispatch = useDispatch();
+    const handleNext = () => {
+        dispatch(updateActiveStepId(activeStepId + 1));
+    }
+    const handlePrev = () => {
+        dispatch(updateActiveStepId(activeStepId - 1));
+    }
     return (
         <form>
             <div className="space-y-12">
@@ -14,14 +24,21 @@ function FormLayout({ children, label }: IFormLayout) {
                 </div>
             </div>
             <div className="mt-6 flex items-center justify-end gap-x-6">
-                <button type="button" className="text-sm font-semibold leading-6 text-gray-900">
-                    Cancel
+                <button type="button" className="text-sm font-semibold leading-6 text-gray-900" onClick={(e: any) => {
+                    e.stopPropagation();
+                    handlePrev()
+                }}>
+                    Back
                 </button>
                 <button
                     type="submit"
                     className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                    onClick={(e: any) => {
+                        e.stopPropagation();
+                        handleNext()
+                    }}
                 >
-                    Save
+                    Next
                 </button>
             </div>
         </form>
