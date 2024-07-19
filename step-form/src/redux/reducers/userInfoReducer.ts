@@ -42,11 +42,7 @@ const initialState = [
     },
     {
         skills: [],
-        certification: {
-            description: '',
-            organization: '',
-            url: ''
-        }
+        certification: []
     },
     {
         resume: '',
