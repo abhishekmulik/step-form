@@ -16,7 +16,7 @@ function SingleCell({ editId, obj, prop, handleOnChange, errors }: {
                         value={obj[prop]}
                         onChange={(e) => handleOnChange(obj?.id, prop, e.target.value)}
                         aria-invalid={errors?.[obj?.id]?.[prop] ? true : false}
-                        aria-describedby={`${obj?.id}-[prop]-error`}
+                        aria-describedby={`${obj?.id}-${prop}-error`}
                     />
                 ) : (
                     <span className="w-full p-2 inline-block text-sm font-medium text-gray-900">{obj?.[prop]}</span>

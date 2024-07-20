@@ -8,7 +8,7 @@ import { useSelector } from 'react-redux';
 
 const AdditionalInfoForm = () => {
     const { handleNext, handlePrev, activeStepId } = useGetStepConfigs();
-    const data = useSelector(state => state?.userInfo);
+    const data = useSelector((state: any) => state?.userInfo);
 
     const [pdfFiles, setPdfFiles] = useState<File[]>([]);
     const [coverLetter, setCoverLetter] = useState(data[activeStepId]?.coverLetter || '');

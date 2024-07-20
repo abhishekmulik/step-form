@@ -5,11 +5,12 @@ import FormLayout from "../formWrapper/FormLayout";
 import useGetStepConfigs from "../../../hooks/useGetStepConfigs";
 import FormFooter from "../formWrapper/FormFooter";
 import { validateEmail, validateName, validateNotEmpty, validatePhone, validatePinCode } from "../../../utils/inputValidations";
+import FooterBtns from "../../common/FooterBtns";
 
 
 export default function InfoForm() {
     const { activeStepId = 0, steps, handleNext, handlePrev } = useGetStepConfigs();
-    const data = useSelector(state => state?.userInfo);
+    const data = useSelector((state: any) => state?.userInfo);
     const [personalInfo, setPersonalInfo] = useState<Record<string, string>>(data[activeStepId]);
     const [isFormValid, setIsFormValid] = useState<boolean>(false || Object.values(data[activeStepId]).every(val => Boolean(val)));
     const [errors, setErrors] = useState<Record<string, string>>({});
@@ -202,27 +203,7 @@ export default function InfoForm() {
             </div>
 
             <div className="mt-6 flex items-center justify-end gap-x-6 w-full col-span-full">
-                {/* <button className="text-sm font-semibold leading-6 text-gray-900" onClick={(e: any) => {
-                    e.stopPropagation();
-                    handlePrev(personalInfo);
-                }}>
-                    Back
-                </button> */}
-                <button
-                    disabled={!isFormValid && !Object.values(data[activeStepId]).every(val => Boolean(val))}
-                    className={`rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm 
-                        ${isFormValid ? 'bg-indigo-600 hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600'
-                            : 'bg-gray-300 cursor-not-allowed'
-                        }`}
-                    onClick={(e: any) => {
-                        e.stopPropagation();
-                        if (isFormValid) {
-                            handleNext(personalInfo);
-                        }
-                    }}
-                >
-                    Next
-                </button>
+                <FooterBtns handleNext={handleNext} handlePrev={handlePrev} isValid={isFormValid} obj={personalInfo} showNext={true} showPrev={false} />
             </div>
         </FormLayout>
     )

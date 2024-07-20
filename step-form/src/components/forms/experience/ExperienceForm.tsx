@@ -23,7 +23,7 @@ const validateExperienceData = (data: any) => data.every(validateExperienceEntry
 
 function ExperienceForm() {
     const { handleNext, handlePrev, activeStepId, steps } = useGetStepConfigs();
-    const data = useSelector(state => state?.userInfo);
+    const data = useSelector((state: any) => state?.userInfo);
     const [experienceData, setExperienceData] = useState(data[activeStepId]?.experience || []);
     const [editId, setEditId] = useState('');
     const [errors, setErrors] = useState<Record<string, Record<string, string>>>({});
@@ -48,7 +48,7 @@ function ExperienceForm() {
     });
 
     const handleOnChange = (editId: string, prop: string, value: string) => {
-        const rowIndex = experienceData.findIndex(exp => exp.id === editId);
+        const rowIndex = experienceData.findIndex((exp: any) => exp.id === editId);
         const updatedData = [...experienceData];
         updatedData[rowIndex][prop] = value;
         setExperienceData(updatedData);
@@ -64,7 +64,7 @@ function ExperienceForm() {
     };
 
     const handleDelete = (id: string) => {
-        const updatedExperience = experienceData.filter(exp => exp.id !== id);
+        const updatedExperience = experienceData.filter((exp: any) => exp.id !== id);
         setExperienceData(updatedExperience);
         setEditId('');
     };
