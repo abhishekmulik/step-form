@@ -8,37 +8,16 @@ const initialState = [
         lastName: '',
         email: '',
         streetAddress: '',
+        phone: '',
         city: '',
         state: '',
-        pinCode: 0,
+        pinCode: '',
     },
     {
-        education: [
-            {
-                id: '123',
-                schoolName: 'St Jude High School',
-                univeristyName: 'SSC',
-                CGPA: '9.0',
-                passingYear: 1999
-            },
-            {
-                id: '1234r234',
-                schoolName: 'Jai hind School',
-                univeristyName: 'HSC',
-                CGPA: '9.0',
-                passingYear: 1999
-            }
-        ]
+        education: []
     },
     {
-        experience: [
-            {
-                id: '1234',
-                company: 'Coditas Solutions',
-                jobTitle: 'Software Engineer',
-                duration: '1year'
-            }
-        ]
+        experience: []
     },
     {
         skills: [],

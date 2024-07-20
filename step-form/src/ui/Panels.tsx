@@ -16,7 +16,9 @@ export default function Panels({ steps, handleUpdateStep }: ISteps) {
                         <li key={step.id}
                             onClick={(e: any) => {
                                 e.stopPropagation();
-                                handleUpdateStep(step.id, steps)
+                                if (step?.status !== 'upcoming') {
+                                    handleUpdateStep(step.id, steps)
+                                }
                             }}
                             className="relative overflow-hidden lg:flex-1">
                             <div

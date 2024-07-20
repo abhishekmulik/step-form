@@ -1,36 +1,35 @@
-import { useState } from 'react'
-import Table from '../../../ui/Table'
-import { ITableHeader } from '../../../ui/ui.types'
-import useGetStepConfigs from '../../../hooks/useGetStepConfigs'
+import { useState, useEffect } from 'react';
+import Table from '../../../ui/Table';
+import { ITableHeader } from '../../../ui/ui.types';
+import useGetStepConfigs from '../../../hooks/useGetStepConfigs';
 import { useSelector } from 'react-redux';
 import uniqid from 'uniqid';
-import { CheckCircleIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/solid';
+import { CheckCircleIcon, TrashIcon, PencilIcon } from '@heroicons/react/24/outline';
+import AddNew from '../../common/AddNew';
+import SingleCell from '../../../ui/SingleCell';
+import RowSetBtns from '../../common/RowSetBtns';
+
 
 
 function EducationForm() {
-    const { handleNext, handlePrev, activeStepId, steps } = useGetStepConfigs();
-    const data = useSelector(state => state?.userInfo);
-    const [educationData, setEducationData] = useState(data[activeStepId]?.education);
-    console.log(educationData);
-    const headers: ITableHeader[] = [
-        {
-            id: 'schoolName',
-            name: 'School/ Institute Name'
-        },
-        {
-            id: 'universityName',
-            name: 'Board/ University Name'
-        },
-        {
-            id: 'cgpa',
-            name: 'CGPA'
-        },
-        {
-            id: 'passingYear',
-            name: 'Passing Year'
-        }
-    ]
+    const { handleNext, handlePrev, activeStepId } = useGetStepConfigs();
+    const data = useSelector((state: any) => state?.userInfo);
+    const [educationData, setEducationData] = useState(data[activeStepId]?.education || []);
     const [editId, setEditId] = useState('');
+    const [errors, setErrors] = useState<Record<string, Record<string, string>>>({});
+    const [canAddNew, setCanAddNew] = useState(true);
+
+    useEffect(() => {
+        const hasInvalidRow = educationData.some((edu: any) => !validateEducationEntry(edu, educationData.indexOf(edu), educationData));
+        setCanAddNew(!hasInvalidRow);
+    }, [educationData]);
+
+    const headers: ITableHeader[] = [
+        { id: 'schoolName', name: 'School/ Institute Name' },
+        { id: 'univeristyName', name: 'Board/ University Name' },
+        { id: 'CGPA', name: 'CGPA' },
+        { id: 'passingYear', name: 'Passing Year' }
+    ];
 
     const educationFactory = () => ({
         id: uniqid(),
@@ -38,117 +37,133 @@ function EducationForm() {
         univeristyName: '',
         CGPA: '',
         passingYear: ''
-    })
+    });
 
     const handleOnChange = (editId: string, prop: string, value: string) => {
-        const rowIndex = educationData?.findIndex(edu => edu.id === editId)
-        const updatedData = JSON.parse(JSON.stringify(educationData));
+        const rowIndex = educationData.findIndex((edu: any) => edu.id === editId);
+        const updatedData = [...educationData];
         updatedData[rowIndex][prop] = value;
         setEducationData(updatedData);
-    }
+        validateField(editId, prop, value);
+    };
 
     const createNewEducation = () => {
-        const newEducation = educationFactory();
-        const updatedEducation = [...educationData]
-        updatedEducation.push(newEducation)
-        console.log({ updatedEducation })
-        setEducationData(updatedEducation);
-        setEditId(newEducation.id)
-    }
+        if (canAddNew) {
+            const newEducation = educationFactory();
+            setEducationData([...educationData, newEducation]);
+            setEditId(newEducation.id);
+        }
+    };
 
     const handleDelete = (id: string) => {
-        const rowIndex = educationData?.findIndex(edu => edu.id === id)
-        const updatedEducation = [...educationData]
-        updatedEducation.splice(rowIndex, 1);
-        console.log({ updatedEducation })
+        const updatedEducation = educationData.filter(edu => edu.id !== id);
         setEducationData(updatedEducation);
-        setEditId('')
-    }
+        setEditId('');
+    };
+
+    const validateField = (editId: string, prop: string, value: string) => {
+        let errorMessage = '';
+        const currentYear = new Date().getFullYear();
+        const rowIndex = educationData.findIndex(edu => edu.id === editId);
+        const updatedData = [...educationData];
+        updatedData[rowIndex][prop] = value;
+
+        switch (prop) {
+            case 'schoolName':
+                if (value.trim() === '') {
+                    errorMessage = 'School name cannot be empty.';
+                }
+                break;
+            case 'univeristyName':
+                if (value.trim() === '') {
+                    errorMessage = 'University name cannot be empty.';
+                }
+                break;
+            case 'CGPA':
+                if (isNaN(Number(value)) || Number(value) > 10) {
+                    errorMessage = 'CGPA between 0 and 10.';
+                }
+                break;
+            case 'passingYear':
+                if (!/^\d{4}$/.test(value) || Number(value) > currentYear) {
+                    errorMessage = 'Invalid passing year.';
+                } else if (rowIndex > 0 && Number(value) >= Number(updatedData[rowIndex - 1].passingYear)) {
+                    errorMessage = 'Enter education latest to oldest';
+                }
+                break;
+        }
+
+        setErrors(prev => ({
+            ...prev,
+            [editId]: {
+                ...prev[editId],
+                [prop]: errorMessage
+            }
+        }));
+    };
+
+    const validateEducationEntry = (entry: any, index: number, array: any[]) => {
+        const currentYear = new Date().getFullYear();
+        const { schoolName, univeristyName, CGPA, passingYear } = entry;
+        const isValidYear = /^\d{4}$/.test(passingYear) && passingYear <= currentYear;
+        const isDescendingOrder = index === 0 || array[index - 1].passingYear > passingYear;
+
+        return (
+            schoolName.trim() !== '' &&
+            univeristyName.trim() !== '' &&
+            !isNaN(Number(CGPA)) && Number(CGPA) <= 10 &&
+            isValidYear &&
+            isDescendingOrder
+        );
+    };
+
+    const validateEducationData = (data: any) => data.every(validateEducationEntry);
+
+    const isValid = validateEducationData(educationData);
 
     return (
         <>
-            <Table label='Education' description='Add education from latest to oldest.' headers={headers} createNew={createNewEducation}>
-                {
-                    educationData?.map((edu) => (
+            {!educationData.length ? (
+                <div className='h-[50vh] flex items-center justify-center'>
+                    <AddNew label='Add education details' addNewCb={createNewEducation} />
+                </div>
+            ) : (
+                <Table label='Add Education' description='Add education from latest to oldest.' headers={headers} createNew={createNewEducation}>
+                    {educationData.map((edu: any) => (
                         <tr key={edu.id} id={edu.id}>
-                            <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0">
-                                {editId === edu.id ? <input
-                                    className="w-full p-2 border border-gray-300 rounded text-sm font-medium text-gray-900"
-                                    defaultValue={edu.schoolName}
-                                    onChange={(e) => handleOnChange(edu.id, 'schoolName', e.target.value)}
-                                /> : <span className="w-full p-2 inline-block text-sm font-medium text-gray-900">{edu.schoolName}</span>}
-                            </td>
-                            <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                {editId === edu.id ? <input
-                                    className="w-full p-2 border border-gray-300 rounded text-sm font-medium text-gray-900"
-                                    defaultValue={edu.univeristyName} onChange={(e) => handleOnChange(edu.id, 'universityName', e.target.value)} /> :
-                                    <span className="w-full p-2 inline-block text-sm font-medium text-gray-900">{edu.universityName}</span>}
-                            </td>
-                            <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                {editId === edu.id ? <input
-                                    className="w-full p-2 border border-gray-300 rounded text-sm font-medium text-gray-900"
-                                    defaultValue={edu.CGPA} onChange={(e) => handleOnChange(edu.id, 'CGPA', e.target.value)}
-                                /> : <span className="w-full p-2 inline-block text-sm font-medium text-gray-900">{edu.CGPA}</span>}
-                            </td>
-                            <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                {editId === edu.id ? <input
-                                    className="w-full p-2 border border-gray-300 rounded text-sm font-medium text-gray-900"
-                                    defaultValue={edu.passingYear} onChange={(e) => handleOnChange(edu.id, 'passingYear', e.target.value)} /> :
-                                    <span className="w-full p-2 inline-block text-sm font-medium text-gray-900">{edu.passingYear}</span>}
-                            </td>
-                            <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0 flex gap-2 items-center">
-                                {
-                                    editId !== edu.id ?
-                                        <button onClick={(e) => {
-                                            e.stopPropagation();
-                                            setEditId(edu.id);
-                                        }}
-                                            className="text-indigo-600 hover:text-indigo-900">
-                                            <span className='inline-block w-4'>
-                                                <PencilIcon />
-                                            </span>
-                                        </button> :
-                                        <button onClick={(e) => {
-                                            e.stopPropagation();
-                                            setEditId('');
-                                        }}
-                                            className="text-indigo-600 hover:text-indigo-900">
-                                            <span className='inline-block w-4'>
-                                                <CheckCircleIcon />
-                                            </span>
-                                        </button>}
-                                <button onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleDelete(edu.id);
-                                }} className="text-indigo-600 hover:text-indigo-900">
-                                    <span className='inline-block w-4'>
-                                        <TrashIcon />
-                                    </span>
-                                </button>
-                            </td>
+                            <SingleCell editId={editId} errors={errors} handleOnChange={handleOnChange} obj={edu} prop='schoolName' />
+                            <SingleCell editId={editId} errors={errors} handleOnChange={handleOnChange} obj={edu} prop='univeristyName' />
+                            <SingleCell editId={editId} errors={errors} handleOnChange={handleOnChange} obj={edu} prop='CGPA' />
+                            <SingleCell editId={editId} errors={errors} handleOnChange={handleOnChange} obj={edu} prop='passingYear' />
+                            <RowSetBtns editId={editId} handleDelete={handleDelete} isValid={isValid} obj={edu} setEditId={setEditId} />
                         </tr>
-                    ))
-                }
-            </Table >
+                    ))}
+                </Table>
+            )}
             <div className="mt-6 flex items-center justify-end gap-x-6 w-full">
-                <button className="text-sm font-semibold leading-6 text-gray-900" onClick={(e: any) => {
-                    e.stopPropagation();
-                    handlePrev({ education: educationData })
-                }}>
+                <button disabled={!isValid}
+                    className={`rounded-md px-3 py-2 text-sm font-semibold text-indigo-600 border-1 border border-indigo-600 shadow-sm 
+                        ${isValid ? 'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600' : 'bg-gray-300 cursor-not-allowed'}`}
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        handlePrev({ education: educationData });
+                    }}>
                     Back
                 </button>
                 <button
-                    className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                    onClick={(e: any) => {
+                    disabled={!isValid}
+                    className={`rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm 
+                        ${isValid ? 'bg-indigo-600 hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600' : 'bg-gray-300 cursor-not-allowed'}`}
+                    onClick={(e) => {
                         e.stopPropagation();
-                        handleNext({ education: educationData })
+                        handleNext({ education: educationData });
                     }}
                 >
                     Next
                 </button>
             </div>
         </>
-    )
+    );
 }
 
-export default EducationForm
+export default EducationForm;

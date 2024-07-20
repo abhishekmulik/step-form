@@ -6,6 +6,7 @@ import { useSelector } from 'react-redux'
 import AdditionalInfo from '../additionalInformation/AdditionalInfo'
 import Experience from '../experience/Experience'
 import Skills from '../skills/Skills'
+import Review from '../reviewAndSubmit/Review'
 
 const selectFormSection = (activeStepId: number) => {
     switch (activeStepId) {
@@ -19,6 +20,8 @@ const selectFormSection = (activeStepId: number) => {
             return <Skills />
         case 4:
             return <AdditionalInfo />
+        case 5:
+            return <Review />
         default:
             return <></>
     }

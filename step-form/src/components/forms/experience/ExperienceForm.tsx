@@ -1,138 +1,129 @@
-import React, { useState } from 'react'
-import { ITableHeader } from '../../../ui/ui.types'
-import Table from '../../../ui/Table'
+import React, { useState, useEffect } from 'react';
+import { ITableHeader } from '../../../ui/ui.types';
+import Table from '../../../ui/Table';
 import uniqid from 'uniqid';
 import useGetStepConfigs from '../../../hooks/useGetStepConfigs';
 import { useSelector } from 'react-redux';
-import { CheckCircleIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/solid';
+import { CheckCircleIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
+import AddNew from '../../common/AddNew';
+import SingleCell from '../../../ui/SingleCell';
+import FooterBtns from '../../common/FooterBtns';
+import RowSetBtns from '../../common/RowSetBtns';
+
+const validateExperienceEntry = (entry: any) => {
+    const { company, jobTitle, duration } = entry;
+    return (
+        company.trim() !== '' &&
+        jobTitle.trim() !== '' &&
+        duration.trim() !== ''
+    );
+};
+
+const validateExperienceData = (data: any) => data.every(validateExperienceEntry);
 
 function ExperienceForm() {
     const { handleNext, handlePrev, activeStepId, steps } = useGetStepConfigs();
     const data = useSelector(state => state?.userInfo);
-    const [experienceData, setExperienceData] = useState(data[activeStepId]?.experience);
+    const [experienceData, setExperienceData] = useState(data[activeStepId]?.experience || []);
     const [editId, setEditId] = useState('');
+    const [errors, setErrors] = useState<Record<string, Record<string, string>>>({});
+    const [canAddNew, setCanAddNew] = useState(true);
+
+    useEffect(() => {
+        const isValid = validateExperienceData(experienceData);
+        setCanAddNew(isValid);
+    }, [experienceData]);
+
     const headers: ITableHeader[] = [
-        {
-            id: 'companyName',
-            name: 'Company Name'
-        },
-        {
-            id: 'jobTitle',
-            name: 'Job Title'
-        },
-        {
-            id: 'duration',
-            name: 'Duration'
-        },
-    ]
+        { id: 'companyName', name: 'Company Name' },
+        { id: 'jobTitle', name: 'Job Title' },
+        { id: 'duration', name: 'Duration' }
+    ];
+
     const experienceFactory = () => ({
         id: uniqid(),
         company: '',
         jobTitle: '',
         duration: ''
-    })
-    const createNewExperience = () => {
-        const newExperience = experienceFactory();
-        const updatedExperience = [...experienceData]
-        updatedExperience.push(newExperience)
-        console.log({ updatedExperience })
-        setExperienceData(updatedExperience);
-        setEditId(newExperience.id)
-    }
-    const handleDelete = (id: string) => {
-        const rowIndex = experienceData?.findIndex(exp => exp.id === id)
-        const updatedExperience = [...experienceData]
-        updatedExperience.splice(rowIndex, 1);
-        console.log({ updatedExperience })
-        setExperienceData(updatedExperience);
-        setEditId('')
-    }
+    });
 
     const handleOnChange = (editId: string, prop: string, value: string) => {
-        const rowIndex = experienceData?.findIndex(exp => exp.id === editId)
-        const updatedData = JSON.parse(JSON.stringify(experienceData));
+        const rowIndex = experienceData.findIndex(exp => exp.id === editId);
+        const updatedData = [...experienceData];
         updatedData[rowIndex][prop] = value;
         setExperienceData(updatedData);
-    }
-    console.log({ experienceData })
+        validateField(editId, prop, value);
+    };
+
+    const createNewExperience = () => {
+        if (canAddNew) {
+            const newExperience = experienceFactory();
+            setExperienceData([...experienceData, newExperience]);
+            setEditId(newExperience.id);
+        }
+    };
+
+    const handleDelete = (id: string) => {
+        const updatedExperience = experienceData.filter(exp => exp.id !== id);
+        setExperienceData(updatedExperience);
+        setEditId('');
+    };
+
+    const validateField = (editId: string, prop: string, value: string) => {
+        let errorMessage = '';
+
+        if (value.trim() === '') {
+            errorMessage = `${prop.replace(/([A-Z])/g, ' $1')} is required.`;
+        }
+
+        setErrors(prev => ({
+            ...prev,
+            [editId]: {
+                ...prev[editId],
+                [prop]: errorMessage
+            }
+        }));
+
+        const hasErrors = Object.values(errors).some(fieldErrors =>
+            Object.values(fieldErrors).some(errorMsg => errorMsg !== '')
+        );
+
+        setCanAddNew(!hasErrors);
+    };
+
+    const isRowValid = (id: string) => {
+        return !Object.values(errors[id] || {}).some(error => error !== '');
+    };
+
+    const isValid = validateExperienceData(experienceData);
+
     return (
         <div>
-            <Table label='Relevant experinece' description='Enter work experience from latest to oldest.' headers={headers} createNew={createNewExperience}>
-                {
-                    experienceData?.map((exp) => (
-                        <tr key={exp.id} id={exp.id}>
-                            <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0">
-                                {editId === exp.id ? <input
-                                    className="w-full p-2 border border-gray-300 rounded text-sm font-medium text-gray-900"
-                                    defaultValue={exp.company}
-                                    onChange={(e) => handleOnChange(exp.id, 'company', e.target.value)}
-                                /> : <span className="w-full p-2 inline-block text-sm font-medium text-gray-900">{exp.company}</span>}
-                            </td>
-                            <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                {editId === exp.id ? <input
-                                    className="w-full p-2 border border-gray-300 rounded text-sm font-medium text-gray-900"
-                                    defaultValue={exp.jobTitle} onChange={(e) => handleOnChange(exp.id, 'jobTitle', e.target.value)} /> :
-                                    <span className="w-full p-2 inline-block text-sm font-medium text-gray-900">{exp.jobTitle}</span>}
-                            </td>
-                            <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                {editId === exp.id ? <input
-                                    className="w-full p-2 border border-gray-300 rounded text-sm font-medium text-gray-900"
-                                    defaultValue={exp.duration} onChange={(e) => handleOnChange(exp.id, 'duration', e.target.value)}
-                                /> : <span className="w-full p-2 inline-block text-sm font-medium text-gray-900">{exp.duration}</span>}
-                            </td>
-                            <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0 flex gap-2 items-center">
-                                {
-                                    editId !== exp.id ?
-                                        <button onClick={(e) => {
-                                            e.stopPropagation();
-                                            setEditId(exp.id);
-                                        }}
-                                            className="text-indigo-600 hover:text-indigo-900">
-                                            <span className='inline-block w-4'>
-                                                <PencilIcon />
-                                            </span>
-                                        </button> :
-                                        <button onClick={(e) => {
-                                            e.stopPropagation();
-                                            setEditId('');
-                                        }}
-                                            className="text-indigo-600 hover:text-indigo-900">
-                                            <span className='inline-block w-4'>
-                                                <CheckCircleIcon />
-                                            </span>
-                                        </button>}
-                                <button onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleDelete(exp.id);
-                                }} className="text-indigo-600 hover:text-indigo-900">
-                                    <span className='inline-block w-4'>
-                                        <TrashIcon />
-                                    </span>
-                                </button>
-                            </td>
-                        </tr>
-                    ))
-                }
-            </Table>
+            {
+                !experienceData.length ? (
+                    <div className='h-[50vh] flex items-center justify-center'>
+                        <AddNew label='Add relevant experience' addNewCb={createNewExperience} />
+                    </div>
+                ) : (
+                    <Table label='Relevant Experience' description='Enter work experience from latest to oldest.' headers={headers} createNew={createNewExperience}>
+                        {
+                            experienceData.map((exp: any) => (
+                                <tr key={exp.id} id={exp.id}>
+                                    <SingleCell errors={errors} editId={editId} handleOnChange={handleOnChange} obj={exp} prop="company" />
+                                    <SingleCell errors={errors} editId={editId} handleOnChange={handleOnChange} obj={exp} prop="jobTitle" />
+                                    <SingleCell errors={errors} editId={editId} handleOnChange={handleOnChange} obj={exp} prop="duration" />
+                                    <RowSetBtns editId={editId} handleDelete={handleDelete} isRowValid={isRowValid} isValid={isValid} obj={exp} setEditId={setEditId} />
+                                </tr>
+                            ))
+                            }
+                        </Table>
+                )
+            }
             <div className="mt-6 flex items-center justify-end gap-x-6 w-full">
-                <button className="text-sm font-semibold leading-6 text-gray-900" onClick={(e: any) => {
-                    e.stopPropagation();
-                    handlePrev({ experience: experienceData })
-                }}>
-                    Back
-                </button>
-                <button
-                    className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                    onClick={(e: any) => {
-                        e.stopPropagation();
-                        handleNext({ experience: experienceData })
-                    }}
-                >
-                    Next
-                </button>
+                <FooterBtns handleNext={handleNext} handlePrev={handlePrev} obj={{ experience: experienceData }} isValid={isValid} showNext={activeStepId !== steps?.length - 1} showPrev={activeStepId !== 0} />
             </div>
         </div>
-    )
+    );
 }
 
-export default ExperienceForm
+export default ExperienceForm;

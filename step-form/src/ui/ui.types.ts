@@ -25,10 +25,14 @@ export interface ISteps {
 export interface Iinput extends React.InputHTMLAttributes<HTMLInputElement> {
     label: string;
     onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+    isValid?: boolean;
+    errorMessage?: string;
+
 }
 
 export interface IUploadFile {
     label: string;
+    onFileChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 export interface ITableHeader {
@@ -41,4 +45,9 @@ export interface ITable {
     headers: ITableHeader[];
     children: ReactNode;
     createNew: () => void;
+}
+
+export interface ITextArea extends React.InputHTMLAttributes<HTMLTextAreaElement> {
+    saveBtnText: string;
+    title: string;
 }

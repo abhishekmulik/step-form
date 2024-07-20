@@ -6,6 +6,7 @@ import { useSelector } from 'react-redux';
 import uniqid from 'uniqid';
 import { PlusCircleIcon } from '@heroicons/react/24/outline';
 import { TrashIcon } from '@heroicons/react/24/outline';
+import AddNew from '../../common/AddNew';
 
 function SkillsForm() {
     const { handleNext, handlePrev, activeStepId, steps } = useGetStepConfigs();
@@ -20,15 +21,18 @@ function SkillsForm() {
         id: uniqid()
     });
 
-    const deleteSkill = (skill) => {
+    const deleteSkill = (skill: string) => {
         const updatedSkills = skills.filter(s => s !== skill);
         setSkills(updatedSkills);
     };
 
-    const addSkill = (skill) => {
-        const updatedSkills = [...new Set([...skills, skill])];
-        setSkills(updatedSkills);
-        setNewSkill('');
+    const addSkill = (skill: string) => {
+        if (skill) {
+            const updatedSkills = [...new Set([...skills, skill])];
+            setSkills(updatedSkills);
+            setNewSkill('');
+        }
+
     };
 
     const addCertifications = () => {
@@ -42,6 +46,7 @@ function SkillsForm() {
             cert.id === id ? { ...cert, [prop]: value } : cert
         );
         setCertification(updatedCertification);
+
     };
 
     const deleteCertification = (id: string) => {
@@ -60,7 +65,7 @@ function SkillsForm() {
                         placeholder='Enter skills and press enter'
                         onKeyDown={e => {
                             if (e.key === 'Enter') {
-                                addSkill(newSkill || 'pressed');
+                                addSkill(newSkill);
                             }
                         }}
                     />
@@ -129,15 +134,7 @@ function SkillsForm() {
                             ))}
                         </>
                     ) : (
-                        <div className='flex items-center flex-col'>
-                            <span className='w-16 inline-block' onClick={(e) => {
-                                e.stopPropagation();
-                                addCertifications();
-                            }}>
-                                <PlusCircleIcon className="stroke-indigo-600 opacity-50 hover:opacity-100 hover:stroke-indigo-900 cursor-pointer" />
-                            </span>
-                                <span>Add certificates</span>
-                            </div>
+                            <AddNew label='Add certificates' addNewCb={addCertifications} />
                     )}
                 </div>
             </div>

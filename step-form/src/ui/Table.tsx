@@ -25,7 +25,7 @@ export default function Table({ label, description, headers, children, createNew
                         type="button"
                         className="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                     >
-                        Add Education
+                        {label}
                     </button>
                 </div>
             </div>
@@ -36,28 +36,13 @@ export default function Table({ label, description, headers, children, createNew
                             <thead>
                                 <tr>
                                     {
-                                        headers?.map(header => <th key={header.id} scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0">
+                                        headers?.map(header => <th key={header.id} scope="col" className="py-3.5 w-[200px] px-3 text-left text-sm font-semibold text-gray-900">
                                             {header.name}
                                         </th>)
                                     }
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-200">
-                                {/* {people.map((person) => (
-                                    <tr key={person.email}>
-                                        <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-0">
-                                            {person.name}
-                                        </td>
-                                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{person.title}</td>
-                                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{person.email}</td>
-                                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{person.role}</td>
-                                        <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
-                                            <a href="#" className="text-indigo-600 hover:text-indigo-900">
-                                                Edit<span className="sr-only">, {person.name}</span>
-                                            </a>
-                                        </td>
-                                    </tr>
-                                ))} */}
                                 {
                                     children
                                 }
