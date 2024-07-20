@@ -1,7 +1,7 @@
 import React from 'react';
 import { PdfFilesProps } from './additionalInfo.types';
 import FileUpload from '../../../ui/FileUpload';
-import { TrashIcon } from '@heroicons/react/24/solid';
+import { TrashIcon } from '@heroicons/react/24/outline';
 
 const UploadResume = ({ pdfFiles, setPdfFiles }: PdfFilesProps) => {
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -26,6 +26,9 @@ const UploadResume = ({ pdfFiles, setPdfFiles }: PdfFilesProps) => {
         <>
             {pdfFiles.length ? (
                 <div className='mt-4'>
+                    <span className="block text-sm font-medium leading-6 text-gray-900">
+                        Resume
+                    </span>
                     <ul className='flex whitespace-nowrap gap-2'>
                         {pdfFiles.map((file, index) => (
                             <li key={index} className="flex items-center gap-2">

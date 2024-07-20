@@ -3,7 +3,7 @@ import AdditionalInfoForm from './AdditionalInfoForm'
 
 function AdditionalInfo() {
     return (
-        <section className='max-w-[75%] mx-auto py-2'>
+        <section className='max-w-[60%] mx-auto py-2 mt-4'>
             <AdditionalInfoForm />
         </section>
     )

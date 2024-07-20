@@ -27,7 +27,7 @@ function RowSetBtns({
                     className={`text-indigo-600 hover:text-indigo-900 ${isValid ? '' : 'cursor-not-allowed'}`}
                     disabled={!isValid}
                 >
-                    <span className='inline-block w-4'>
+                    <span className='inline-block w-6'>
                         <PencilIcon />
                     </span>
                 </button>
@@ -40,7 +40,7 @@ function RowSetBtns({
                     className={isValid ? "text-indigo-600 hover:text-indigo-900" : 'text-gray-600 cursor-not-allowed'}
                     disabled={!isValid}
                 >
-                    <span className='inline-block w-4'>
+                        <span className='inline-block w-6'>
                         <CheckCircleIcon />
                     </span>
                 </button>

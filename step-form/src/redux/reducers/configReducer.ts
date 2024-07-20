@@ -1,4 +1,4 @@
-import { UPDATE_STEP } from "../constants/constants"
+import { SUBMIT_APPLICATION, UPDATE_STEP } from "../constants/constants"
 import { updateStep } from "../helper"
 import { Step } from "../types"
 
@@ -25,5 +25,7 @@ const updateStepReducer = (state = initialState, action: any) => {
             return state;
     }
 }
+
+
 
 export default updateStepReducer;

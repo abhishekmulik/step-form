@@ -1,5 +1,5 @@
 import { UpdateUserInfoAction } from "../actions/actions.types";
-import { UPDATE_FORM, UPDATE_USER_INFO } from "../constants/constants"
+import { FILL_ANOTHER_RESPONSE, UPDATE_FORM, UPDATE_USER_INFO } from "../constants/constants"
 import { updateUserInfo } from "../helper"
 
 const initialState = [

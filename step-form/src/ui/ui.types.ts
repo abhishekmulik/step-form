@@ -19,7 +19,7 @@ export interface Step {
 
 export interface ISteps {
     steps: Step[],
-    handleUpdateStep: (id: string, steps: Step[]) => void;
+    handleUpdateStep: any
 }
 
 export interface Iinput extends React.InputHTMLAttributes<HTMLInputElement> {
